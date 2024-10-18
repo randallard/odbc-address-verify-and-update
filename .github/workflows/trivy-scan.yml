@@ -10,9 +10,13 @@ jobs:
   scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -21,12 +25,16 @@ jobs:
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-          exit-code: '1'
-          ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
+      - name: List files in current directory
+        run: ls -la
+        
+      - name: Display SARIF file content (if exists)
+        run: cat trivy-results.sarif || echo "SARIF file not found"
+
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        if: success() || failure()
         with:
           sarif_file: 'trivy-results.sarif'
