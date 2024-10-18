@@ -1,0 +1,11 @@
+# Environment variables set for all `cargo ...` commands.
+[env]
+
+# This file will not deploy to Kubernetes - should be managed by secrets
+
+# Scope down tracing, to filter out external lib tracing
+RUST_LOG="odbc_address_verify_and_update=debug" # comment out for error only tracing, change info to debug for verbose
+SERVICE_CONFIG_VAR_ONE="config var one"
+SERVICE_CONFIG_VAR_TWO="config var two"
+
+
