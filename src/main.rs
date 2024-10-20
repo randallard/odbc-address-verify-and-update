@@ -2,6 +2,9 @@ mod config;
 mod error;
 mod fs;
 
+// #[cfg(test)] // Commented during early development - uncomment for unit tests
+pub mod _dev_utils;
+
 pub use self::error::{Error, Result};
 pub use config::config;
 
@@ -11,13 +14,18 @@ use tracing::{debug, error, info};
 use tracing_subscriber::EnvFilter;
 
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
 
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
     info!("odbc-address-verify-and-update started");
+
+    // -- FOR DEV ONLY
+
+    _dev_utils::init_dev().await;
 
     debug!("got config CONFIG_VAR_ONE: {}", &config().CONFIG_VAR_ONE);
     debug!("got config CONFIG_VAR_TWO: {}", &config().CONFIG_VAR_TWO);
