@@ -1,0 +1,66 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: waed-jury-review
+  namespace: waed-jury-review-test
+spec:
+  selector:
+    app: waed-jury-review
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waed-jury-review
+  namespace: waed-jury-review-test
+  labels:
+    app: waed-jury-review
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waed-jury-review
+  template:
+    metadata:
+      labels:
+        app: waed-jury-review
+    spec:
+      imagePullSecrets:
+        - name: docker-registry-secret
+      containers:
+        - name: waed-jury-review
+          image: waed-docker-dev.cfar.nsapps.dcn/waed-jury-review:1.518
+          env:
+            - name: APPLICATION_LEVEL
+              value: test
+          ports:
+            - containerPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+  name: waed-jury-review-ingress
+  namespace: waed-jury-review-test
+spec:
+  rules:
+    - host: waed-jury-review-test.fcsf.dcn
+      http:
+        paths:
+          - backend:
+              service:
+                name: waed-jury-review
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

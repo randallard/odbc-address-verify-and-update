@@ -1,0 +1,24 @@
+mode: MainLine
+branches:
+  main:
+    regex: ^master$|^main$
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    is-release-branch: true
+  feature:
+    regex: ^features?[/-]
+    tag: alpha
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    tag: beta
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+ignore:
+  sha: []
+merge-message-formats: {}

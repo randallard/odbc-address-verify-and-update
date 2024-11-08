@@ -1,0 +1,13 @@
+apiVersion: customize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: waed-jury-review-test
+commonLabels:
+  app: waed-jury-review
+resources:
+  - ../../base
+images:
+  - name: waed-jury-review
+    newName: registry.fcsf.dcn/waed-jury-review
+    newTag: latest
+patches:
+  - path: configMap.yaml
